@@ -39,7 +39,7 @@
 
             var options = Enum.GetNames(typeof(Actions));
             int selectedIndex = 0;
-
+            var pathToFiles = @"..\..\..\..\data_samples";
             Console.CursorVisible = false;
 
             while (true)
@@ -81,7 +81,7 @@
                         switch (action)
                         {
                             case Actions.Level_0:
-                                var level0FilePath = @"..\files\lvl1\Sudoku.csv";
+                                var level0FilePath = $"{pathToFiles}\\lvl1\\Sudoku_test.csv";
 
                                 if (sudocuService.IsApplicable(reader.ReadMatrix(level0FilePath)))
                                 {
@@ -98,8 +98,8 @@
                                 break;
 
                             case Actions.Level_1:
-                                var level1InitFilePath = @"..\files\lvl2\init.csv";
-                                var level1SolutionFilePath = @"..\files\lvl2\solution.csv";
+                                var level1InitFilePath = $"{pathToFiles}\\lvl2\\init.csv";
+                                var level1SolutionFilePath = $"{pathToFiles}\\lvl2\\solution.csv";
 
                                 if (sudocuService.IsCorrectSolution(reader.ReadMatrix(level1InitFilePath), reader.ReadMatrix(level1SolutionFilePath)))
                                 {

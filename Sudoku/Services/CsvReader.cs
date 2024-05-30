@@ -1,13 +1,12 @@
-﻿namespace Sudoku.Services {
+﻿namespace Sudoku.Services
+{
     using Sudoku.Interfaces;
     using System;
     using System.Collections.Generic;
     using System.Linq;
-    using System.Text;
-    using System.Threading.Tasks;
 
     public class CsvReader : IFileReader {
-        public List<IEnumerable<int>> ReadMatrix(string filePath, char separator = ',') {
+        public Matrix ReadMatrix(string filePath, char separator = ',') {
             var matrix = new List<IEnumerable<int>>();
             try {
                 var lines = File.ReadAllLines(filePath);

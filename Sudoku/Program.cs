@@ -5,7 +5,7 @@
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
 
-    internal class Program
+    public class Program
     {
         private enum Actions
         {
@@ -30,7 +30,7 @@
             await host.RunAsync();
         }
 
-        static void Execute(IServiceProvider hostProvider)
+        public static void Execute(IServiceProvider hostProvider)
         {
             using IServiceScope serviceScope = hostProvider.CreateScope();
             IServiceProvider provider = serviceScope.ServiceProvider;
@@ -40,7 +40,7 @@
             var options = Enum.GetNames(typeof(Actions));
             int selectedIndex = 0;
             var pathToFiles = @"..\..\..\..\data_samples";
-            Console.CursorVisible = false;
+            //Console.CursorVisible = false;
 
             while (true)
             {

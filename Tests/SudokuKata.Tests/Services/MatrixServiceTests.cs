@@ -1,6 +1,4 @@
-﻿using Sudoku.Services;
-
-namespace Sudoku.Services.Tests
+﻿namespace Sudoku.Services.Tests
 {
 
     public class MatrixServiceTests
@@ -16,7 +14,7 @@ namespace Sudoku.Services.Tests
         public void IsSquareMatrix_ValidSquareMatrix_ReturnsTrue()
         {
             // Arrange
-            var squareMatrix = new List<IEnumerable<int>>
+            var squareMatrix = new List<Row>
         {
             new List<int> { 1, 2, 3 },
             new List<int> { 4, 5, 6 },
@@ -34,7 +32,7 @@ namespace Sudoku.Services.Tests
         public void IsSquareMatrix_NonSquareMatrix_ReturnsFalse()
         {
             // Arrange
-            var nonSquareMatrix = new List<IEnumerable<int>>
+            var nonSquareMatrix = new List<Row>
         {
             new List<int> { 1, 2, 3 },
             new List<int> { 4, 5, 6 }
@@ -48,42 +46,52 @@ namespace Sudoku.Services.Tests
         }
 
         [Fact]
-        public void IsRowValuesUnique_UniqueRow_ReturnsTrue()
+        public void IsAnyRowsValuesDuplicated_UniqueRows_ReturnsFalse()
         {
             // Arrange
-            var uniqueRow = new List<int> { 1, 2, 3, 4, 5 };
+            var uniqueRow =
+                new[]
+                {
+                    new List<int> { 1, 2, 3, 4, 5 },
+                    new List<int> { 1, 2, 3, 4, 5 }
+                };
 
             // Act
-            var result = _matrixService.IsRowValuesUnique(uniqueRow);
-
-            // Assert
-            Assert.True(result);
-        }
-
-        [Fact]
-        public void IsRowValuesUnique_DuplicateRow_ReturnsFalse()
-        {
-            // Arrange
-            var duplicateRow = new List<int> { 1, 2, 3, 3, 5 };
-
-            // Act
-            var result = _matrixService.IsRowValuesUnique(duplicateRow);
+            var result = _matrixService.IsAnyRowsValuesDuplicated(uniqueRow);
 
             // Assert
             Assert.False(result);
         }
 
         [Fact]
+        public void IsAnyRowsValuesDuplicated_DuplicateInRow_ReturnsTrue()
+        {
+            // Arrange
+            var duplicateRow =
+                new[]
+                {
+                    new List<int> { 1, 2, 3, 3, 5 },
+                    new List<int> { 1, 2, 3, 4, 5 }
+                };
+
+            // Act
+            var result = _matrixService.IsAnyRowsValuesDuplicated(duplicateRow);
+
+            // Assert
+            Assert.True(result);
+        }
+
+        [Fact]
         public void Transpose_TransposedMatrixReturned()
         {
             // Arrange
-            var init = new List<IEnumerable<int>>
+            var init = new List<Row>
         {
             new List<int> { 1, 2 },
             new List<int> { 3, 4 },
         };
 
-            var transpoused = new List<IEnumerable<int>>
+            var transpoused = new List<Row>
         {
             new List<int> { 1, 3 },
             new List<int> { 2, 4 },
@@ -126,7 +134,7 @@ namespace Sudoku.Services.Tests
         public void IsRegionsValuesUnique_RegionsWithDuplicateValues_ReturnsFalse()
         {
             // Arrange
-            var matrix = new List<List<int>>
+            var matrix = new List<Row>
         {
             new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
             new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
@@ -150,7 +158,7 @@ namespace Sudoku.Services.Tests
         public void IsRegionsValuesUnique_RegionsWithUniqueValues_ReturnsTrue()
         {
             // Arrange
-            var matrix = new List<List<int>>
+            var matrix = new List<Row>
         {
             new List<int> { 1, 2, 3, 4, 5, 6, 7, 8, 9 },
             new List<int> { 4, 5, 6, 7, 8, 9, 1, 2, 3 },
@@ -174,7 +182,7 @@ namespace Sudoku.Services.Tests
         public void IsRegionsValuesUnique_InvalidDueToIncompleteRegion_ReturnsFalse()
         {
             // Arrange
-            var matrix = new List<List<int>>
+            var matrix = new List<Row>
         {
             new List<int> { 5, 3, 4, 6, 7, 8, 9, 1, 2 },
             new List<int> { 6, 7, 2, 1, 9, 5, 3, 4, 8 },
@@ -198,12 +206,12 @@ namespace Sudoku.Services.Tests
         public void ValuesMatches_DifferentGridSizes_ReturnsFalse()
         {
             // Arrange
-            var initialGrid = new List<List<int>>
+            var initialGrid = new List<Row>
         {
             new List<int> { 1, 2, 3 },
         };
 
-            var solution = new List<List<int>>
+            var solution = new List<Row>
         {
             new List<int> { 1, 2, 3, 4,},
         };
@@ -219,13 +227,13 @@ namespace Sudoku.Services.Tests
         public void ValuesMatches_DifferentValuesInSamePosition_ReturnsFalse()
         {
             // Arrange
-            var initialGrid = new List<List<int>>
+            var initialGrid = new List<Row>
         {
             new List<int> { 1, 2, 3 },
             new List<int> { 4, 5, 6 }
         };
 
-            var solution = new List<List<int>>
+            var solution = new List<Row>
         {
             new List<int> { 1, 2, 3 },
             new List<int> { 4, 9, 6 }
@@ -242,7 +250,7 @@ namespace Sudoku.Services.Tests
         public void ValuesMatches_IdenticalGrids_ReturnsTrue()
         {
             // Arrange
-            var grid = new List<List<int>>
+            var grid = new List<Row>
         {
             new List<int> { 1, 2 },
             new List<int> { 3, 4 }

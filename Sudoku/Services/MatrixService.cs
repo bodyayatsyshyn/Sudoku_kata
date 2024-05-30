@@ -1,12 +1,9 @@
-﻿using Sudoku.Interfaces;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace Sudoku.Services
+﻿namespace Sudoku.Services
 {
+    using Sudoku.Interfaces;
+    using System.Collections.Generic;
+    using System.Linq;
+
     public class MatrixService : IMatrixService
     {
         public bool IsSquareMatrix(Matrix matrix)
@@ -15,9 +12,13 @@ namespace Sudoku.Services
             return !matrix.Any(row => row.Count() != rowCount);
         }
 
-        public bool IsRowValuesUnique(Row row)
+        public bool IsAnyRowsValuesDuplicated(Matrix matrix)
         {
-            return row.Count() == row.Distinct().Count();
+            return matrix.Any(row => row.Count() != row.Distinct().Count());
+        }
+        public bool IsAnyColsValuesDuplicated(Matrix matrix)
+        {
+            return IsAnyRowsValuesDuplicated(Transpose(matrix));
         }
 
         public Matrix Transpose(Matrix matrix)
@@ -89,5 +90,7 @@ namespace Sudoku.Services
 
             return true;
         }
+
+
     }
 }

@@ -13,18 +13,13 @@
 
         public bool IsApplicable(Matrix matrix) 
         {
-            var notSquareMatrix = !_matrixService.IsSquareMatrix(matrix);
-            var rowOrColsValuesDuplicated = matrix.Any(row => !_matrixService.IsRowValuesUnique(row)) 
-                || _matrixService.Transpose(matrix).Any(row => !_matrixService.IsRowValuesUnique(row));
-            var valuesNotInRange = matrix.Any(row => !_matrixService.IsRowContainsRequiredRange(row));
-            var regionValuesDuplicated = !_matrixService.IsRegionsValuesUnique(matrix);
+            var isSquareMatrix = _matrixService.IsSquareMatrix(matrix);
+            var isAnyDuplicatesInRows = _matrixService.IsAnyRowsValuesDuplicated(matrix);
+            var isAnyDuplicatesInCols = _matrixService.IsAnyColsValuesDuplicated(matrix);
+            var allValuesInRange = matrix.Any(row => _matrixService.IsRowContainsRequiredRange(row));
+            var isRegionValuesUnique = _matrixService.IsRegionsValuesUnique(matrix);
 
-            if (notSquareMatrix || rowOrColsValuesDuplicated || valuesNotInRange || regionValuesDuplicated)
-            {
-                return false;
-            }
-
-            return true;
+            return isSquareMatrix && !isAnyDuplicatesInRows && !isAnyDuplicatesInCols && allValuesInRange && isRegionValuesUnique;
         }
 
         public bool IsCorrectSolution(Matrix initialGrid, Matrix solution)

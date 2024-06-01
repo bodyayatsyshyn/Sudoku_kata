@@ -4,17 +4,17 @@ namespace Sudoku.Services.Tests
     using Sudoku.Interfaces;
     using Moq;
 
-    public class SudokuServiceTests
+    public class SudokuCheckerTests
     {
         private Mock<IMatrixService> _mockMatrixService;
 
-        private readonly SudokuService _sudokyService;
+        private readonly SudokuChecker _sudokyService;
 
-        public SudokuServiceTests()
+        public SudokuCheckerTests()
         {
             _mockMatrixService = new Mock<IMatrixService>();
             _mockMatrixService.Setup(x => x.Transpose(It.IsAny<Matrix>())).Returns<Matrix>(x => x);
-            _sudokyService = new SudokuService(_mockMatrixService.Object);
+            _sudokyService = new SudokuChecker(_mockMatrixService.Object);
         }
 
         [Fact]

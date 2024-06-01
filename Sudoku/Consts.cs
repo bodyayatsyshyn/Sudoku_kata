@@ -2,7 +2,7 @@
 {
     public class Consts
     {
-        public static int EmptyMatrixValue => 0;
+        public static int EmptyMatrixValue => -1;
 
         public static class Responses
         {

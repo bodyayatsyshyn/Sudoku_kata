@@ -22,7 +22,8 @@
 
             builder.Services
                 .AddTransient<IFileReader, CsvReader>()
-                .AddTransient<ISudokuService, SudokuService>()
+                .AddTransient<ISudokuChecker, SudokuChecker>()
+                .AddTransient<ISudokuSolver, SudokuSolver>()
                 .AddTransient<IMatrixService, MatrixService>();
             using IHost host = builder.Build();
 
@@ -36,7 +37,7 @@
             using IServiceScope serviceScope = hostProvider.CreateScope();
             IServiceProvider provider = serviceScope.ServiceProvider;
             var reader = provider.GetRequiredService<IFileReader>();
-            var sudocuService = provider.GetRequiredService<ISudokuService>();
+            var sudocuChecker = provider.GetRequiredService<ISudokuChecker>();
 
             var options = Enum.GetNames(typeof(Actions));
             int selectedIndex = 0;
@@ -84,7 +85,7 @@
                             case Actions.Level_0:
                                 var level0FilePath = $"{pathToFiles}\\lvl0\\Sudoku_test.csv";
 
-                                if (sudocuService.IsApplicable(reader.ReadMatrix(level0FilePath)))
+                                if (sudocuChecker.IsApplicable(reader.ReadMatrix(level0FilePath)))
                                 {
                                     Console.ForegroundColor = ConsoleColor.Green;
                                     Console.WriteLine(Consts.Responses.CompliesWithRules);
@@ -102,7 +103,7 @@
                                 var level1InitFilePath = $"{pathToFiles}\\lvl1\\init.csv";
                                 var level1SolutionFilePath = $"{pathToFiles}\\lvl1\\solution.csv";
 
-                                if (sudocuService.IsCorrectSolution(reader.ReadMatrix(level1InitFilePath), reader.ReadMatrix(level1SolutionFilePath)))
+                                if (sudocuChecker.IsCorrectSolution(reader.ReadMatrix(level1InitFilePath), reader.ReadMatrix(level1SolutionFilePath)))
                                 {
                                     Console.ForegroundColor = ConsoleColor.Green;
                                     Console.WriteLine(Consts.Responses.CorrectSolution);
@@ -117,9 +118,11 @@
                                 break;
 
                             case Actions.Level_2:
+                                var sudocuSolver = provider.GetRequiredService<ISudokuSolver>();
+
                                 var level2InitFilePath = $"{pathToFiles}\\lvl2\\init.csv";
                                 var matrix = reader.ReadMatrix(level2InitFilePath);
-                                if (sudocuService.IsSolvable(ref matrix))
+                                if (sudocuSolver.IsSolvable(ref matrix))
                                 {
                                     Console.ForegroundColor = ConsoleColor.Green;
                                     Console.WriteLine(Consts.Responses.SudokuSolved);

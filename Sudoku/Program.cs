@@ -11,6 +11,7 @@
         {
             Level_0 = 0,
             Level_1 = 1,
+            Level_2 = 2,
 
             Exit = -1,
         }
@@ -40,7 +41,7 @@
             var options = Enum.GetNames(typeof(Actions));
             int selectedIndex = 0;
             var pathToFiles = @"..\..\..\..\data_samples";
-            //Console.CursorVisible = false;
+            Console.CursorVisible = false;
 
             while (true)
             {
@@ -81,7 +82,7 @@
                         switch (action)
                         {
                             case Actions.Level_0:
-                                var level0FilePath = $"{pathToFiles}\\lvl1\\Sudoku_test.csv";
+                                var level0FilePath = $"{pathToFiles}\\lvl0\\Sudoku_test.csv";
 
                                 if (sudocuService.IsApplicable(reader.ReadMatrix(level0FilePath)))
                                 {
@@ -98,8 +99,8 @@
                                 break;
 
                             case Actions.Level_1:
-                                var level1InitFilePath = $"{pathToFiles}\\lvl2\\init.csv";
-                                var level1SolutionFilePath = $"{pathToFiles}\\lvl2\\solution.csv";
+                                var level1InitFilePath = $"{pathToFiles}\\lvl1\\init.csv";
+                                var level1SolutionFilePath = $"{pathToFiles}\\lvl1\\solution.csv";
 
                                 if (sudocuService.IsCorrectSolution(reader.ReadMatrix(level1InitFilePath), reader.ReadMatrix(level1SolutionFilePath)))
                                 {
@@ -115,6 +116,27 @@
                                 Console.WriteLine();
                                 break;
 
+                            case Actions.Level_2:
+                                var level2InitFilePath = $"{pathToFiles}\\lvl2\\init.csv";
+                                var matrix = reader.ReadMatrix(level2InitFilePath);
+                                if (sudocuService.IsSolvable(ref matrix))
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Green;
+                                    Console.WriteLine(Consts.Responses.SudokuSolved);
+                                    Console.ResetColor();
+                                    PrintMatrix(matrix);
+                                }
+                                else
+                                {
+                                    Console.ForegroundColor = ConsoleColor.Red;
+                                    Console.WriteLine(Consts.Responses.SudokuNotSolved);
+                                }
+
+                                Console.ResetColor();
+                                Console.WriteLine();
+
+                                break;
+
                             case Actions.Exit:
                                 return;
 
@@ -124,6 +146,16 @@
                         Console.ReadKey(true);
                         break;
                 }
+            }
+        }
+
+        public static void PrintMatrix(Matrix matrix)
+        {
+            foreach (var row in matrix)
+            {
+                foreach (var element in row)
+                    Console.Write($"{element} ");
+                Console.WriteLine();
             }
         }
     }

@@ -2,7 +2,7 @@
 {
     public class Consts
     {
-        public static int EmptyMatrixValue => -1;
+        public static int EmptyMatrixValue => 0;
 
         public static class Responses
         {
@@ -13,6 +13,10 @@
             public static string CompliesWithRules => "The input complies with Sudoku's rules.";
 
             public static string DoesNotComplyWithRules => "The input doesn't comply with Sudoku's rules.";
+
+            public static string SudokuSolved => "Your Sudoku has been solved, check solution below.";
+
+            public static string SudokuNotSolved => $"{DoesNotComplyWithRules} And it can't be solved.";
 
         }
     }

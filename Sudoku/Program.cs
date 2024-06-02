@@ -12,6 +12,7 @@
             Level_0 = 0,
             Level_1 = 1,
             Level_2 = 2,
+            Level_3 = 3,
 
             Exit = -1,
         }
@@ -22,8 +23,10 @@
 
             builder.Services
                 .AddTransient<IFileReader, CsvReader>()
+                .AddTransient<ISudokuService, SudokuService>()
                 .AddTransient<ISudokuChecker, SudokuChecker>()
                 .AddTransient<ISudokuSolver, SudokuSolver>()
+                .AddTransient<ISudokuGenarator, SudokuGenarator>()
                 .AddTransient<IMatrixService, MatrixService>();
             using IHost host = builder.Build();
 
@@ -134,6 +137,19 @@
                                     Console.ForegroundColor = ConsoleColor.Red;
                                     Console.WriteLine(Consts.Responses.SudokuNotSolved);
                                 }
+
+                                Console.ResetColor();
+                                Console.WriteLine();
+
+                                break;
+                            case Actions.Level_3:
+                                var sudocuGenerator = provider.GetRequiredService<ISudokuGenarator>();
+
+                                var level3FilePath = $"{pathToFiles}\\lvl3\\init.csv";
+
+                                var result = sudocuGenerator.GenerateSudoku(9, 10);
+
+                                PrintMatrix(result);
 
                                 Console.ResetColor();
                                 Console.WriteLine();

@@ -4,178 +4,34 @@
     using Sudoku.Services;
     using Microsoft.Extensions.DependencyInjection;
     using Microsoft.Extensions.Hosting;
+    using System.Diagnostics.CodeAnalysis;
 
+    [ExcludeFromCodeCoverage(Justification = "Entry point, no logic to test")]
     public class Program
     {
-        private enum Actions
-        {
-            Level_0 = 0,
-            Level_1 = 1,
-            Level_2 = 2,
-            Level_3 = 3,
-
-            Exit = -1,
-        }
-
         static async Task Main(string[] args)
         {
             HostApplicationBuilder builder = Host.CreateApplicationBuilder(args);
 
             builder.Services
+                .AddTransient<IKataRunner, ConsoleKataRunner>()
                 .AddTransient<IFileReader, CsvReader>()
+                .AddTransient<IFileWriter, CsvWriter>()
                 .AddTransient<ISudokuService, SudokuService>()
                 .AddTransient<ISudokuChecker, SudokuChecker>()
                 .AddTransient<ISudokuSolver, SudokuSolver>()
-                .AddTransient<ISudokuGenarator, SudokuGenarator>()
+                .AddTransient<ISudokuGenerator, SudokuGenerator>()
                 .AddTransient<IMatrixService, MatrixService>();
             using IHost host = builder.Build();
 
-            Execute(host.Services);
+            using IServiceScope serviceScope = host.Services.CreateScope();
+            IServiceProvider provider = serviceScope.ServiceProvider;
+            
+            var kataRunner = provider.GetRequiredService<IKataRunner>();
+
+            kataRunner.Run();
 
             await host.RunAsync();
-        }
-
-        public static void Execute(IServiceProvider hostProvider)
-        {
-            using IServiceScope serviceScope = hostProvider.CreateScope();
-            IServiceProvider provider = serviceScope.ServiceProvider;
-            var reader = provider.GetRequiredService<IFileReader>();
-            var sudocuChecker = provider.GetRequiredService<ISudokuChecker>();
-
-            var options = Enum.GetNames(typeof(Actions));
-            int selectedIndex = 0;
-            var pathToFiles = @"..\..\..\..\data_samples";
-            Console.CursorVisible = false;
-
-            while (true)
-            {
-                Console.Clear();
-                Console.ForegroundColor = ConsoleColor.Green;
-                Console.Write("System:");
-                Console.ResetColor();
-                Console.WriteLine(" Choose something (use arrow keys and enter).");
-                for (int i = 0; i < options.Length; i++)
-                {
-                    if (i == selectedIndex)
-                    {
-                        Console.ForegroundColor = ConsoleColor.Green;
-                        Console.Write("-> ");
-                    }
-                    else
-                    {
-                        Console.Write("   ");
-                    }
-                    Console.WriteLine(options[i]);
-                    Console.ResetColor();
-                }
-
-                var key = Console.ReadKey(true);
-                switch (key.Key)
-                {
-                    case ConsoleKey.UpArrow:
-                        selectedIndex = (selectedIndex <= 0 ? options.Length : selectedIndex) - 1;
-                        break;
-                    case ConsoleKey.DownArrow:
-                        selectedIndex = selectedIndex >= options.Length - 1 ? 0 : selectedIndex + 1;
-                        break;
-                    case ConsoleKey.Enter:
-                        Console.WriteLine($"Selected: {options[selectedIndex]}");
-                        Actions action;
-                        Enum.TryParse(options[selectedIndex], out action);
-
-                        switch (action)
-                        {
-                            case Actions.Level_0:
-                                var level0FilePath = $"{pathToFiles}\\lvl0\\Sudoku_test.csv";
-
-                                if (sudocuChecker.IsApplicable(reader.ReadMatrix(level0FilePath)))
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine(Consts.Responses.CompliesWithRules);
-                                }
-                                else
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine(Consts.Responses.DoesNotComplyWithRules);
-                                }
-                                Console.ResetColor();
-                                Console.WriteLine();
-                                break;
-
-                            case Actions.Level_1:
-                                var level1InitFilePath = $"{pathToFiles}\\lvl1\\init.csv";
-                                var level1SolutionFilePath = $"{pathToFiles}\\lvl1\\solution.csv";
-
-                                if (sudocuChecker.IsCorrectSolution(reader.ReadMatrix(level1InitFilePath), reader.ReadMatrix(level1SolutionFilePath)))
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine(Consts.Responses.CorrectSolution);
-                                }
-                                else
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine(Consts.Responses.CorrectSolution);
-                                }
-                                Console.ResetColor();
-                                Console.WriteLine();
-                                break;
-
-                            case Actions.Level_2:
-                                var sudocuSolver = provider.GetRequiredService<ISudokuSolver>();
-
-                                var level2InitFilePath = $"{pathToFiles}\\lvl2\\init.csv";
-                                var matrix = reader.ReadMatrix(level2InitFilePath);
-                                if (sudocuSolver.IsSolvable(ref matrix))
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Green;
-                                    Console.WriteLine(Consts.Responses.SudokuSolved);
-                                    Console.ResetColor();
-                                    PrintMatrix(matrix);
-                                }
-                                else
-                                {
-                                    Console.ForegroundColor = ConsoleColor.Red;
-                                    Console.WriteLine(Consts.Responses.SudokuNotSolved);
-                                }
-
-                                Console.ResetColor();
-                                Console.WriteLine();
-
-                                break;
-                            case Actions.Level_3:
-                                var sudocuGenerator = provider.GetRequiredService<ISudokuGenarator>();
-
-                                var level3FilePath = $"{pathToFiles}\\lvl3\\init.csv";
-
-                                var result = sudocuGenerator.GenerateSudoku(9, 10);
-
-                                PrintMatrix(result);
-
-                                Console.ResetColor();
-                                Console.WriteLine();
-
-                                break;
-
-                            case Actions.Exit:
-                                return;
-
-                        }
-
-                        Console.WriteLine("Press any key to continue.");
-                        Console.ReadKey(true);
-                        break;
-                }
-            }
-        }
-
-        public static void PrintMatrix(Matrix matrix)
-        {
-            foreach (var row in matrix)
-            {
-                foreach (var element in row)
-                    Console.Write($"{element} ");
-                Console.WriteLine();
-            }
         }
     }
 }

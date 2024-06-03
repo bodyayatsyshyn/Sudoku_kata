@@ -2,7 +2,7 @@
 {
     using Sudoku.Interfaces;
 
-    public class SudokuGenarator(ISudokuSolver sudokuSolver) : ISudokuGenarator
+    public class SudokuGenerator(ISudokuSolver sudokuSolver) : ISudokuGenerator
     {
         private readonly Random _rnd = new Random();
 
@@ -19,7 +19,7 @@
             var matrix = new List<Row>();
             for (int i = 0; i < gridDimention; ++i)
             {
-                matrix.Add(new List<int>(Enumerable.Repeat(Consts.EmptyMatrixValue, gridDimention)));
+                matrix.Add(Enumerable.Repeat(Consts.EmptyMatrixValue, gridDimention));
             }
             return matrix;
         }
@@ -38,10 +38,10 @@
         private IEnumerable<(int, int)> GetIndexes(int count, int maxValue)
         {
             var uniqueIndexPairs = new HashSet<(int, int)>();
-            do
+            while (uniqueIndexPairs.Count() < count)
             {
                 uniqueIndexPairs.Add((_rnd.Next(0, maxValue), _rnd.Next(0, maxValue)));
-            } while (uniqueIndexPairs.Count() < count);
+            }
             return uniqueIndexPairs;
         }
     }

@@ -1,6 +1,6 @@
 ﻿namespace Sudoku.Interfaces
 {
-    public interface ISudokuGenarator
+    public interface ISudokuGenerator
     {
         Matrix GenerateSudoku(int gridDimention, int emptyCells);
     }

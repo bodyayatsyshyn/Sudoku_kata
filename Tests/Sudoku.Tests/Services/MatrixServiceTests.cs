@@ -1,6 +1,5 @@
 ﻿namespace Sudoku.Services.Tests
 {
-
     public class MatrixServiceTests
     {
         private readonly MatrixService _matrixService;

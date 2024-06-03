@@ -27,10 +27,5 @@
 
             return true;
         }
-
-        public bool IsSolved(Matrix matrix)
-        {
-            return !matrix.SelectMany(x => x).Contains(Consts.EmptyMatrixValue);
-        }
     }
 }

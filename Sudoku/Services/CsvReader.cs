@@ -7,7 +7,7 @@
 
     public class CsvReader : IFileReader {
         public Matrix ReadMatrix(string filePath, char separator = ',') {
-            var matrix = new List<IEnumerable<int>>();
+            var matrix = new List<Row>();
             try {
                 var lines = File.ReadAllLines(filePath);
 

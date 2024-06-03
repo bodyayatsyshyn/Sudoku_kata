@@ -128,15 +128,27 @@
                     break;
                 case KataActions.Level_3:
                     var level3FilePath = $"{_rootPath}\\lvl3\\init.csv";
+                    Console.Write("Sudoku dimention: ");
+                    var dimentionStr = Console.ReadLine();
+                    Console.Write("Empty cells: ");
+                    var emptyCellsStr = Console.ReadLine();
+                    if (!int.TryParse(dimentionStr, out var dimention) || !int.TryParse(emptyCellsStr, out var emptyCells))
+                    {
+                        Console.ForegroundColor = ConsoleColor.Cyan;
+                        Console.WriteLine("It seems to be too complicated for you, ask someone to help and try again later.");
+                        Console.ResetColor();
+                        Environment.Exit(-1);
+                    }
+                    else
+                    {
+                        var result = sudokuGenerator.GenerateSudoku(dimention, emptyCells);
 
-                    var result = sudokuGenerator.GenerateSudoku(9, 10);
+                        PrintMatrix(result);
+                        fileWriter.WriteMatrix(level3FilePath, result);
 
-                    PrintMatrix(result);
-                    fileWriter.WriteMatrix(level3FilePath, result);
-
-                    Console.ResetColor();
-                    Console.WriteLine();
-
+                        Console.ResetColor();
+                        Console.WriteLine();
+                    }
                     break;
 
                 case KataActions.Exit:

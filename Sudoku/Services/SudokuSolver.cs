@@ -26,7 +26,10 @@
                 return true;
             }
 
-            for (int num = minValue; num <= maxValue; ++num)
+            var rnd = new Random();
+            var awailableValues = Enumerable.Range(minValue, maxValue).OrderBy(x => rnd.Next()).ToArray();
+
+            foreach(var num in  awailableValues)
             {
                 if (sudokuService.IsSafe(matrix, row, col, num))
                 {
